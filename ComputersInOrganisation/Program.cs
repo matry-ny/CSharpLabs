@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ComputersInOrganisation
 {
@@ -31,7 +26,10 @@ namespace ComputersInOrganisation
             string computerWithLargestStorage = "";
             int largestStorageValue = 0;
 
-            int departmentIndex = 0;
+            Department lowestComputerDepartment = new Department();
+
+            int largestStorageDepartmentIndex = 0;
+            int lowestProductivityDepartmentIndex = 0;
             foreach (Department element in departmentsConfiguration)
             {
                 allComputersQuantity += element.GetAllComputersQuantity();
@@ -40,9 +38,19 @@ namespace ComputersInOrganisation
                 {
                     largestStorageValue = hddData.Key;
                     computerWithLargestStorage = hddData.Value;
-                    departmentWithLargestStorage = departments[departmentIndex];
+                    departmentWithLargestStorage = departments[largestStorageDepartmentIndex];
+                    largestStorageDepartmentIndex++;
                 }
-                departmentIndex++;
+
+                var departmentLowestComputerConfig = element.FindLowestProductivityComputer();
+                if (Equals(lowestComputerDepartment.GetLowestCpuFrequency(), 0.0) ||
+                    (departmentLowestComputerConfig.GetLowestCpuFrequency() < lowestComputerDepartment.GetLowestCpuFrequency() &&
+                    departmentLowestComputerConfig.GetLowestMemorySize() < lowestComputerDepartment.GetLowestMemorySize())
+                )
+                {
+                    lowestComputerDepartment = departmentLowestComputerConfig;
+                    lowestProductivityDepartmentIndex++;
+                }
             }
 
             Console.WriteLine("Computers quantity: {0}", allComputersQuantity);
@@ -51,6 +59,13 @@ namespace ComputersInOrganisation
                 computerWithLargestStorage,
                 largestStorageValue,
                 departmentWithLargestStorage
+            );
+            Console.WriteLine(
+                "Computer with lowest productivity is {0} ({1} HGz, {2} Gb) in {3}",
+                lowestComputerDepartment.GetLowestProductivityComputerType(),
+                lowestComputerDepartment.GetLowestCpuFrequency(),
+                lowestComputerDepartment.GetLowestMemorySize(),
+                departments[lowestProductivityDepartmentIndex]
             );
         }
     }
